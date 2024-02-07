@@ -1,13 +1,13 @@
-#!/bin/bash -l
-#SBATCH -C cpu
-#SBATCH -c 1
-#SBATCH -p debug
+#!/bin/bash
 #SBATCH -N 1
-#SBATCH -t 00:2:00
-#SBATCH --cpu-freq=3500000
+#SBATCH -p RM
+#SBATCH -t 02:00
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpu-freq=3400000
 #SBATCH -J job-@BENCHMARK@
 #SBATCH -o job-@BENCHMARK@.o%j
 #SBATCH -e job-@BENCHMARK@.e%j
 
 export OMP_NUM_THREADS=1
-srun -N 1 -n 1 --cpu-freq=3500000 ./benchmark-@BENCHMARK@
+srun -N 1 -n 1 --cpu-freq=3400000 ./benchmark-@BENCHMARK@
+

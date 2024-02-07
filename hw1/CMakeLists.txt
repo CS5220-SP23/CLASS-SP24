@@ -6,8 +6,8 @@ find_package(BLAS REQUIRED)
 # Run the full set of tests
 option(ALL_SIZES "Test an extended set of sizes; will take more CPU time." OFF)
 
-# On Perlmutter -- 3.5 GHz * 4 vector width * 2 vector pipelines * 2 flops for FMA = 56 GF/s
-set(MAX_SPEED 56 CACHE STRING "The max speed of the CPU in GF/s")
+# On Bridges-2 -- 3.4 GHz * 4 vector width * 2 vector pipelines * 2 flops for FMA = 54.4 GF/s
+set(MAX_SPEED 54.4 CACHE STRING "The max speed of the CPU in GF/s")
 
 # Group number
 set(GROUP_NO 00 CACHE STRING "Your group number (two digits)")
@@ -35,12 +35,12 @@ add_library(benchmark OBJECT benchmark.cpp)
 target_compile_definitions(benchmark PRIVATE MAX_SPEED=${MAX_SPEED} $<$<BOOL:${ALL_SIZES}>:ALL_SIZES>)
 target_compile_features(benchmark PRIVATE cxx_std_11)
 
-foreach (BENCHMARK IN ITEMS naive blocked blas)
+foreach (BENCHMARK IN ITEMS naive blocked)
     # Create benchmarking executable
     add_executable(benchmark-${BENCHMARK} dgemm-${BENCHMARK}.c)
-    target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
+    target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark)
     target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
-    target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=znver3)
+    target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=znver1)
 
     # Generate job script
     configure_file(job.in job-${BENCHMARK})
